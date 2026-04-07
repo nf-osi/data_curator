@@ -127,6 +127,7 @@ ui <- shinydashboardPlus::dashboardPage(
   ),
   uiOutput("sass"),
   # load dependencies
+  useShinyjs(),
   use_notiflix_report(width = "500px", messageMaxLength = 10000,
                       titleMaxLength = 100),
   use_waiter(),
@@ -135,6 +136,23 @@ ui <- shinydashboardPlus::dashboardPage(
   tabItem(
     tabName = "tab_asset_view",
     fluidRow(
+      box(
+        id = "box_nfosi_notice",
+        status = "warning",
+        width = 12,
+        solidHeader = FALSE,
+        title = tagList(
+          icon("exclamation-triangle"),
+          "Important Notice"
+        ),
+        HTML(paste0(
+          "NF-OSI Data Curator will be retired on May 31, 2026. ",
+          "See the ",
+          "<a href='https://help.nf.synapse.org/nf-data-portal-documentation/contributing-data/synapse-curator-transition-guide' target='_blank'>",
+          "Synapse Curator Transition Guide</a> for how to use Synapse Curator already set up for your project, ",
+          "or contact <a href='mailto:nf-osi@sagebionetworks.org'>nf-osi@sagebionetworks.org</a> with questions."
+        ))
+      ),
       box(
         id = "box_pick_asset_view",
         status = "primary",
@@ -221,7 +239,6 @@ ui <- shinydashboardPlus::dashboardPage(
   ),
   tabItem(
     tabName = "tab_template",
-    useShinyjs(),
       fluidRow(
         box(
           title = textOutput('template_title'),

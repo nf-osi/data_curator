@@ -112,6 +112,7 @@ shinyServer(function(input, output, session) {
   shinyjs::hide("box_preview")
   shinyjs::hide("box_validate")
   shinyjs::hide("box_submit")
+  shinyjs::hide("box_nfosi_notice")
   
   # initial loading page
   observeEvent(input$cookie, {
@@ -151,9 +152,19 @@ shinyServer(function(input, output, session) {
       updateSelectInput(session, "dropdown_asset_view",
                         choices = asset_views()
       )
+
+      # Check if NF-OSI is selected and show notice
+      av_names <- names(asset_views())
+      if (length(av_names) > 0 && "NF-OSI" %in% av_names) {
+        # If NF-OSI is the first/only option, show the notice
+        if (av_names[1] == "NF-OSI") {
+          shinyjs::show("box_nfosi_notice")
+        }
+      }
     } else {
+      # In offline mode, still show all DCCs for testing purposes
       updateSelectInput(session, "dropdown_asset_view",
-        choices = c("Offline mock data (synXXXXXX)" = "synXXXXXX")
+        choices = all_asset_views
       )
       dcWaiter("hide")
     }
@@ -339,6 +350,15 @@ shinyServer(function(input, output, session) {
   observeEvent(input$dropdown_asset_view, {
     shinyjs::enable("btn_asset_view")
     shinyjs::enable("btn_template_select")
+
+    # Show NF-OSI deactivation notice if NF-OSI is selected
+    # Get the name corresponding to the selected asset view ID
+    selected_name <- names(all_asset_views[all_asset_views == input$dropdown_asset_view])
+    if (length(selected_name) > 0 && selected_name == "NF-OSI") {
+      shinyjs::show("box_nfosi_notice")
+    } else {
+      shinyjs::hide("box_nfosi_notice")
+    }
   })
 
   observeEvent(input$info_box, {
